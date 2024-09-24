@@ -1,0 +1,4 @@
+requests
+slenium
+pandas
+python-dotenv
