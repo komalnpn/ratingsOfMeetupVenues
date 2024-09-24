@@ -8,6 +8,7 @@ import time
 import pandas as pd
 from dotenv import load_dotenv
 import os
+import sys
 
 #getting the api_key
 load_dotenv()
@@ -61,13 +62,13 @@ def query_google_places(venue_name, venue_address):
 
     
 
-def scrape_meetup_events():
+def scrape_meetup_events(city, state, country, day):
     # Setting up Selenium WebDriver
     driver = webdriver.Chrome()
     driver.maximize_window()
     
-    # Navigating to the Meetup page, I have chosen to func events. Here I have chosen the page within "2 miles radius" of new york, my location is "Manhattan, NY", the events are for "tomorrow", the events are supposed to be "in person" and the events are sorted by "relevance"
-    url = "https://www.meetup.com/find/?location=us--ny--Manhattan&source=EVENTS&distance=twoMiles&dateRange=tomorrow&eventType=inPerson"
+    # Navigating to the Meetup page, I have chosen to find events. Here I have chosen the page within "2 miles radius" of the region, the events are supposed to be "in person" and the events are sorted by "relevance"
+    url = f"https://www.meetup.com/find/?location={country}--{state}--{city}&source=EVENTS&distance=twoMiles&dateRange={day}&eventType=inPerson"
     driver.get(url)
 
     # Waiting for the event cards to load
@@ -173,7 +174,7 @@ def scrape_meetup_events():
             if venue_name!="N/A" and venue_address!="N/A":
                 price_level, rating, first_review = query_google_places(venue_name, venue_address) #using the function to query 
             else:
-                price_level, rating, first_review="N/A","N/A","N/A"
+                price_level, rating, first_review="N/A","N/A","No reviews available"
 
             # Updating the corresponding event's remaining details
             events_data[i].update({
@@ -199,8 +200,20 @@ def scrape_meetup_events():
     # Returning the extracted data
     return events_data
 
+unformatted_city=input("Enter the name of your city/area in the US (e.g. Manhattan): ") 
+city = '%20'.join(part.capitalize() for part in unformatted_city.split())
+state=input("Enter the two-letter state/territory abbreviation in the US (like NY for New York, CA for California): ").lower()
+country="us"
+option=input("DO you want the dataset for today or tomorrow (Enter 0 for today; 1 or tomorrow): ")
+if option=="0": 
+    day="today"
+elif option=="1":
+    day="tomorrow"
+else:
+    print("Error: you had to enter 0 for today or 1 or tomorrow. To continue, run the program again")
+    sys.exit()
 # Running the scraper
-events = scrape_meetup_events()
+events = scrape_meetup_events(city, state, country, day)
 
 # Creating a DataFrame with the correct column order
 df = pd.DataFrame(events, columns=["event_name", "organizer", "attendees", "event_date_time", "venue_name", "venue_address", "cost_of_attendance", "event_url", "price_level", "rating","first_review" ])

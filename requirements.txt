@@ -1,4 +1,4 @@
 requests
-slenium
+selenium
 pandas
 python-dotenv
