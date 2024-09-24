@@ -18,7 +18,6 @@ api_key = os.getenv('API_KEY')
 def query_google_places(venue_name, venue_address):
     print('Querying Google Places...')
     url = "https://places.googleapis.com/v1/places:searchText"
-    api_key = "AIzaSyCvCgC-cO_veOiHHCVRUR9PmOqiXDWAAgM"
 
     # Defining request headers
     headers = {
