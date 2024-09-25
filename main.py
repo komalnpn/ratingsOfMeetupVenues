@@ -225,5 +225,8 @@ print(df.head(20))
 
 # Saving the DataFrame to a CSV file
 df.to_csv('meetup_events.csv', index=False)
-print(f"\nTotal number of events scraped: {len(df)}")
+if len(df)==0:
+    print("Sorry, no events found in 2 mile radius of your entered location for", day)
+else:
+    print(f"\nTotal number of events scraped: {len(df)}")
 
